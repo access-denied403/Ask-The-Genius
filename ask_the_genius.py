@@ -1,16 +1,15 @@
-import argparse
-import wikipedia
-from win10toast import ToastNotifier
+import time
+import sqlite3
+import datetime
 
-def ask_genius(question):
-    answer = wikipedia.summary(question).split(".")[0]
-    toast = ToastNotifier()
-    toast.show_toast("The Genius:", answer, duration=50)
+
+class Health(object):
+	def __init__(self):
+		self.date = str(datetime.datetime.fromtimestamp(time.time()).strftime('%d-%m-%Y %H:%M:%S'))
+		
+	def __repr__(self):
+		return self.date
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("question", 
-            help="What do you want to ask the genius?")
-    args = parser.parse_args()
-    ask_genius(args.question)
-
+	func = Health()
+	print(func)
