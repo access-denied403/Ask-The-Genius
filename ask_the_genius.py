@@ -1,61 +1,31 @@
-'''
-DAILY TRACKER
-
-dato - tidspunkt??
-maskine / tid / længde / kcal
-vægt / BMI
-kost / vand / humør
-skridttæller
-
-'''
-
-import time
 import sqlite3
-import datetime
 
-
-class Health(object):
-	def __init__(self):
-		self.date = str(datetime.datetime.fromtimestamp(time.time()).strftime('%d-%m-%Y %H:%M:%S'))
-		
-		self.month = self.today()[0]
-		self.day = self.today()[1]
-
-
-		self.connection = sqlite3.connect("Database.db")
-		self.cursor = self.connection.cursor()
-		
-		self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {self.month}(Day INT, Machine TEXT, Time INT, Distance REAL, Kcal INT)")
-
-
-	def today(self):
-		months = {"01": "Januar", "02": "Februar",
-				"03": "Marts", "04": "April",
-				"05": "May", "06": "Juni",
-				"07": "Juli", "08": "August",
-				"09": "September", "10": "Oktober",
-				"11": "November", "12": "December"}
-		date, time = self.date.split()
-		month = months[date.split("-")[1]]
-		day = self.date.split("-")[0]
-		return month, day
-	
-	
-	def log(self):
-		day = self.day
-		machine = input("Enter Machine: ")
-		time = int(input("Enter time in minutes: "))
-		distance = float(input("Enter distance in kilometre: "))
-		kcal = int(input("Enter kcal: "))
-		
-		self.cursor.execute(f"INSERT INTO {self.month}(Day, Machine, Time, Distance, Kcal) VALUES(?,?,?,?,?)",(day, machine, time, distance, kcal))
-		self.connection.commit()
-		print("DATA LOGGED!!")
-		self.cursor.close()
-		self.connection.close()
-
+class Database(object):
+    def __init__(self):
+        self.connection = sqlite3.connect("Database.db")
+        self.cursor = self.connection.cursor()
+        self.table_name = "Table_Example"
+        self.cursor.execute(f"CREATE TABLE IF NOT EXISTS {self.table_name} \
+                            (column_1 INT, column_2 TEXT, column_3 REAL)")
+        
+    def insert_data(self):
+        column_1 = int(input("Enter Int: "))
+        column_2 = input("Enter String: ")
+        column_3 = float(input("Enter Float: "))
+        self.cursor.execute(f"INSERT INTO {self.table_name} \
+            (column_1, column_2, column_3) VALUES(?,?,?)",(column_1, column_2, column_3))
+        
+        self.connection.commit()
+        print("Data Saved")
+    
+    def read_data(self):
+        self.cursor.execute(f"SELECT * FROM {self.table_name}")
+        for row in self.cursor.fetchall():
+            print(row)
 
 if __name__ == "__main__":
-	func = Health()
-	func.log()
-	
+    database = Database()
+    database.insert_data()
+    database.read_data()
+    database.cursor.close()
+    database.connection.close()
